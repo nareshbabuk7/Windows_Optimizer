@@ -1,0 +1,480 @@
+{
+  "services": [
+    {
+      "name": "DiagTrack",
+      "displayName": "Connected User Experiences and Telemetry",
+      "category": "Telemetry & Privacy",
+      "tier": "Safe",
+      "recommendedByDefault": true,
+      "description": "Collects and transmits diagnostic and usage telemetry data to Microsoft in the background.",
+      "impact": "None for normal use. Stops continuous background telemetry reporting and disk/network activity."
+    },
+    {
+      "name": "dmwappushservice",
+      "displayName": "Device Management Wireless Application Protocol (WAP) Push",
+      "category": "Telemetry & Privacy",
+      "tier": "Safe",
+      "recommendedByDefault": true,
+      "description": "Routes WAP Push messages and assists in telemetry collection and device management.",
+      "impact": "None for home and gaming PCs."
+    },
+    {
+      "name": "WerSvc",
+      "displayName": "Windows Error Reporting Service",
+      "category": "Telemetry & Privacy",
+      "tier": "Safe",
+      "recommendedByDefault": true,
+      "description": "Logs and sends crash dumps and error reports to Microsoft when applications hang or crash.",
+      "impact": "Removes the 'Checking for a solution to the problem...' dialog when apps crash."
+    },
+    {
+      "name": "dps",
+      "displayName": "Diagnostic Policy Service",
+      "category": "Diagnostics & Bloat",
+      "tier": "Optional",
+      "recommendedByDefault": false,
+      "description": "Enables problem detection, troubleshooting, and resolution for Windows components.",
+      "impact": "Built-in Windows Troubleshooters (e.g., Network Troubleshooter) will not function while disabled."
+    },
+    {
+      "name": "WdiServiceHost",
+      "displayName": "Diagnostic Service Host",
+      "category": "Diagnostics & Bloat",
+      "tier": "Optional",
+      "recommendedByDefault": false,
+      "description": "Hosts diagnostic services used by the Diagnostic Policy Service to inspect system events.",
+      "impact": "Windows automatic troubleshooters won't run background diagnostics."
+    },
+    {
+      "name": "WdiSystemHost",
+      "displayName": "Diagnostic System Host",
+      "category": "Diagnostics & Bloat",
+      "tier": "Optional",
+      "recommendedByDefault": false,
+      "description": "Hosts system-level diagnostic drivers and checks.",
+      "impact": "Windows automatic troubleshooters won't run background diagnostics."
+    },
+    {
+      "name": "PcaSvc",
+      "displayName": "Program Compatibility Assistant Service",
+      "category": "Diagnostics & Bloat",
+      "tier": "Safe",
+      "recommendedByDefault": true,
+      "description": "Monitors programs installed and run by the user for known legacy compatibility issues.",
+      "impact": "None unless you frequently run 20-year-old Windows XP installers."
+    },
+    {
+      "name": "MapsBroker",
+      "displayName": "Downloaded Maps Manager",
+      "category": "Unused Features",
+      "tier": "Safe",
+      "recommendedByDefault": true,
+      "description": "Background daemon that manages offline maps for the built-in Windows Maps app.",
+      "impact": "Offline maps in the Windows Maps app will not auto-update."
+    },
+    {
+      "name": "RetailDemo",
+      "displayName": "Retail Demo Service",
+      "category": "Unused Features",
+      "tier": "Safe",
+      "recommendedByDefault": true,
+      "description": "Used by retail stores (like Best Buy) to put PCs into a store display loop.",
+      "impact": "Zero impact. Completely useless on personal computers."
+    },
+    {
+      "name": "Fax",
+      "displayName": "Fax Service",
+      "category": "Unused Features",
+      "tier": "Safe",
+      "recommendedByDefault": true,
+      "description": "Enables sending and receiving faxes via an analog phone modem.",
+      "impact": "None unless you have a physical 1990s phone line fax modem connected."
+    },
+    {
+      "name": "RemoteRegistry",
+      "displayName": "Remote Registry",
+      "category": "Security & Network",
+      "tier": "Safe",
+      "recommendedByDefault": true,
+      "description": "Allows remote network users to modify registry settings on your computer.",
+      "impact": "Improves security. No impact for non-enterprise personal PCs."
+    },
+    {
+      "name": "wisvc",
+      "displayName": "Windows Insider Service",
+      "category": "Unused Features",
+      "tier": "Safe",
+      "recommendedByDefault": true,
+      "description": "Manages beta builds for users enrolled in the Windows Insider Program.",
+      "impact": "Do not disable only if you actively install experimental Windows Insider preview builds."
+    },
+    {
+      "name": "WalletService",
+      "displayName": "WalletService",
+      "category": "Unused Features",
+      "tier": "Safe",
+      "recommendedByDefault": true,
+      "description": "Legacy service used by the deprecated Microsoft Wallet app.",
+      "impact": "Zero impact."
+    },
+    {
+      "name": "PhoneSvc",
+      "displayName": "Phone Service",
+      "category": "Unused Features",
+      "tier": "Safe",
+      "recommendedByDefault": true,
+      "description": "Manages telephony state on devices with cellular voice modems.",
+      "impact": "None on desktop PCs and standard Wi-Fi laptops (Phone Link uses a separate app process)."
+    },
+    {
+      "name": "lfsvc",
+      "displayName": "Geolocation Service",
+      "category": "Telemetry & Privacy",
+      "tier": "Safe",
+      "recommendedByDefault": true,
+      "description": "Monitors the current geographic location of the system and manages geofences.",
+      "impact": "Weather widgets or apps using automatic Windows GPS location will ask for a manual city/zip code."
+    },
+    {
+      "name": "TrkWks",
+      "displayName": "Distributed Link Tracking Client",
+      "category": "Unused Features",
+      "tier": "Safe",
+      "recommendedByDefault": true,
+      "description": "Maintains links between NTFS files across computers in an enterprise Windows domain.",
+      "impact": "None for home users; saves constant background NTFS tracking overhead."
+    },
+    {
+      "name": "WMPNetworkSvc",
+      "displayName": "Windows Media Player Network Sharing Service",
+      "category": "Unused Features",
+      "tier": "Safe",
+      "recommendedByDefault": true,
+      "description": "Shares legacy Windows Media Player libraries to other networked DLNA devices.",
+      "impact": "None unless you stream via legacy Windows Media Player DLNA."
+    },
+    {
+      "name": "icssvc",
+      "displayName": "Windows Mobile Hotspot Service",
+      "category": "Hardware & Peripherals",
+      "tier": "Optional",
+      "recommendedByDefault": false,
+      "description": "Provides the ability to share a cellular or Ethernet connection as a Wi-Fi hotspot.",
+      "impact": "You cannot turn your PC into a Wi-Fi Mobile Hotspot while disabled."
+    },
+    {
+      "name": "Spooler",
+      "displayName": "Print Spooler",
+      "category": "Hardware & Peripherals",
+      "tier": "Optional",
+      "recommendedByDefault": false,
+      "description": "Spools print jobs and handles interaction with physical and PDF virtual printers. Often consumes 15-40 MB RAM continuously.",
+      "impact": "You will not be able to print to physical printers or 'Microsoft Print to PDF' while stopped."
+    },
+    {
+      "name": "PrintNotify",
+      "displayName": "Printer Extensions and Notifications",
+      "category": "Hardware & Peripherals",
+      "tier": "Optional",
+      "recommendedByDefault": false,
+      "description": "Opens custom printer dialogs and manages printer notifications.",
+      "impact": "Safe to disable if you do not use a printer."
+    },
+    {
+      "name": "stisvc",
+      "displayName": "Windows Image Acquisition (WIA)",
+      "category": "Hardware & Peripherals",
+      "tier": "Optional",
+      "recommendedByDefault": false,
+      "description": "Provides image acquisition services for flatbed scanners and some legacy cameras.",
+      "impact": "Document scanners won't work while disabled (standard USB webcams still work normally)."
+    },
+    {
+      "name": "bthserv",
+      "displayName": "Bluetooth Support Service",
+      "category": "Hardware & Peripherals",
+      "tier": "Optional",
+      "recommendedByDefault": false,
+      "description": "Supports discovery and association of remote Bluetooth devices.",
+      "impact": "Bluetooth headphones, mice, and controllers will not connect. Safe if your desktop has no Bluetooth or you only use wired/2.4GHz dongle gear."
+    },
+    {
+      "name": "BTAGService",
+      "displayName": "Bluetooth Audio Gateway Service",
+      "category": "Hardware & Peripherals",
+      "tier": "Optional",
+      "recommendedByDefault": false,
+      "description": "Supports the audio gateway role of the Bluetooth Handsfree Profile.",
+      "impact": "Bluetooth headsets won't transmit audio if disabled."
+    },
+    {
+      "name": "SysMain",
+      "displayName": "SysMain (Formerly Superfetch)",
+      "category": "Performance & Storage",
+      "tier": "Optional",
+      "recommendedByDefault": false,
+      "description": "Preloads frequently used apps into RAM. Can consume 50-150 MB RAM and cause high disk I/O spikes.",
+      "impact": "On fast NVMe SSDs, disabling frees RAM and background CPU/disk spikes with negligible app launch difference."
+    },
+    {
+      "name": "WSearch",
+      "displayName": "Windows Search Indexer",
+      "category": "Performance & Storage",
+      "tier": "Optional",
+      "recommendedByDefault": false,
+      "description": "Continuously indexes files, emails, and content in the background (often uses 40-120 MB RAM + disk usage).",
+      "impact": "Start menu app search still works, but instant content search inside documents/files will be slower (great to disable if you use Everything by voidtools)."
+    },
+    {
+      "name": "XblAuthManager",
+      "displayName": "Xbox Live Auth Manager",
+      "category": "Gaming & Xbox",
+      "tier": "Optional",
+      "recommendedByDefault": false,
+      "description": "Provides authentication and authorization services for interacting with Xbox Live.",
+      "impact": "Safe to disable if you only use Steam/Epic and never play Xbox Game Pass or Microsoft Store games."
+    },
+    {
+      "name": "XblGameSave",
+      "displayName": "Xbox Live Game Save",
+      "category": "Gaming & Xbox",
+      "tier": "Optional",
+      "recommendedByDefault": false,
+      "description": "Syncs cloud save data for Xbox Game Pass and Xbox Play Anywhere titles.",
+      "impact": "Safe to disable if you don't play Xbox Game Pass titles."
+    },
+    {
+      "name": "XboxNetApiSvc",
+      "displayName": "Xbox Live Networking Service",
+      "category": "Gaming & Xbox",
+      "tier": "Optional",
+      "recommendedByDefault": false,
+      "description": "Supports peer-to-peer multiplayer networking for Xbox Live games.",
+      "impact": "Safe to disable if you don't play Xbox Live multiplayer games."
+    },
+    {
+      "name": "XboxGipSvc",
+      "displayName": "Xbox Accessory Management Service",
+      "category": "Gaming & Xbox",
+      "tier": "Optional",
+      "recommendedByDefault": false,
+      "description": "Manages Xbox Wireless Adapter accessories.",
+      "impact": "Safe to disable if you don't use an official Xbox controller."
+    },
+    {
+      "name": "WbioSrvc",
+      "displayName": "Windows Biometric Service",
+      "category": "Hardware & Peripherals",
+      "tier": "Optional",
+      "recommendedByDefault": false,
+      "description": "Captures, compares, and stores fingerprint and Windows Hello facial biometric data.",
+      "impact": "Safe to disable on desktops without a fingerprint reader or Windows Hello IR camera."
+    },
+    {
+      "name": "SCardSvr",
+      "displayName": "Smart Card",
+      "category": "Hardware & Peripherals",
+      "tier": "Safe",
+      "recommendedByDefault": true,
+      "description": "Manages access to physical smart card readers for enterprise login cards.",
+      "impact": "None unless you log in with a physical enterprise/government Smart Card."
+    },
+    {
+      "name": "TabletInputService",
+      "displayName": "Touch Keyboard and Handwriting Panel Service",
+      "category": "Hardware & Peripherals",
+      "tier": "Optional",
+      "recommendedByDefault": false,
+      "description": "Enables touch keyboard and stylus handwriting on touchscreen devices.",
+      "impact": "Note: In Windows 11, disabling this may also disable the Win + . (period) Emoji picker."
+    },
+    {
+      "name": "SensorService",
+      "displayName": "Sensor Service",
+      "category": "Hardware & Peripherals",
+      "tier": "Safe",
+      "recommendedByDefault": true,
+      "description": "Manages ambient light sensors, accelerometers, and auto-rotation on tablets.",
+      "impact": "None on desktop PCs or standard laptops without auto-brightness/auto-rotate sensors."
+    },
+    {
+      "name": "SensrSvc",
+      "displayName": "Sensor Monitoring Service",
+      "category": "Hardware & Peripherals",
+      "tier": "Safe",
+      "recommendedByDefault": true,
+      "description": "Monitors ambient light and orientation sensors to adjust screen brightness and rotation.",
+      "impact": "None on desktops."
+    },
+    {
+      "name": "SensorDataService",
+      "displayName": "Sensor Data Service",
+      "category": "Hardware & Peripherals",
+      "tier": "Safe",
+      "recommendedByDefault": true,
+      "description": "Delivers data from various tablet/convertible hardware sensors.",
+      "impact": "None on desktops and non-convertible laptops."
+    },
+    {
+      "name": "hvhost",
+      "displayName": "HV Host Service",
+      "category": "Virtualization",
+      "tier": "Optional",
+      "recommendedByDefault": false,
+      "description": "Provides an interface for the Hyper-V hypervisor to provide per-partition counters to the host OS.",
+      "impact": "Safe to disable if you do not use Hyper-V, WSL2, or Docker Desktop."
+    },
+    {
+      "name": "vmickvpexchange",
+      "displayName": "Hyper-V Data Exchange Service",
+      "category": "Virtualization",
+      "tier": "Optional",
+      "recommendedByDefault": false,
+      "description": "Provides a mechanism to exchange metadata between a Hyper-V virtual machine and the host.",
+      "impact": "Safe to disable on bare-metal PCs not running Hyper-V."
+    },
+    {
+      "name": "vmicguestinterface",
+      "displayName": "Hyper-V Guest Service Interface",
+      "category": "Virtualization",
+      "tier": "Optional",
+      "recommendedByDefault": false,
+      "description": "Provides an interface for the Hyper-V host to copy files to or from the virtual machine.",
+      "impact": "Safe to disable on bare-metal PCs not running Hyper-V."
+    },
+    {
+      "name": "vmicshutdown",
+      "displayName": "Hyper-V Guest Shutdown Service",
+      "category": "Virtualization",
+      "tier": "Optional",
+      "recommendedByDefault": false,
+      "description": "Provides a mechanism to shut down a guest virtual machine from the host.",
+      "impact": "Safe to disable on bare-metal PCs."
+    },
+    {
+      "name": "vmicheartbeat",
+      "displayName": "Hyper-V Heartbeat Service",
+      "category": "Virtualization",
+      "tier": "Optional",
+      "recommendedByDefault": false,
+      "description": "Monitors the state of a virtual machine by reporting a heartbeat at regular intervals.",
+      "impact": "Safe to disable on bare-metal PCs."
+    },
+    {
+      "name": "vmicvmsession",
+      "displayName": "Hyper-V PowerShell Direct Service",
+      "category": "Virtualization",
+      "tier": "Optional",
+      "recommendedByDefault": false,
+      "description": "Provides a mechanism to manage virtual machines with PowerShell without networking.",
+      "impact": "Safe to disable on bare-metal PCs."
+    },
+    {
+      "name": "vmicrdv",
+      "displayName": "Hyper-V Remote Desktop Virtualization Service",
+      "category": "Virtualization",
+      "tier": "Optional",
+      "recommendedByDefault": false,
+      "description": "Provides a platform for communication between the virtual machine and the host.",
+      "impact": "Safe to disable on bare-metal PCs."
+    },
+    {
+      "name": "vmictimesync",
+      "displayName": "Hyper-V Time Synchronization Service",
+      "category": "Virtualization",
+      "tier": "Optional",
+      "recommendedByDefault": false,
+      "description": "Synchronizes the system time of a virtual machine with the system time of the physical computer.",
+      "impact": "Safe to disable on bare-metal PCs."
+    },
+    {
+      "name": "vmicvss",
+      "displayName": "Hyper-V Volume Shadow Copy Requestor",
+      "category": "Virtualization",
+      "tier": "Optional",
+      "recommendedByDefault": false,
+      "description": "Coordinates the communications required to use Volume Shadow Copy Service to back up a virtual machine.",
+      "impact": "Safe to disable on bare-metal PCs."
+    }
+  ],
+  "startupPatterns": [
+    {
+      "pattern": "OneDrive",
+      "reason": "Cloud storage sync client that runs continuously in the background (~60-150 MB RAM).",
+      "recommendedByDefault": false,
+      "tier": "Optional"
+    },
+    {
+      "pattern": "MicrosoftEdgeAutoLaunch|MicrosoftEdgeUpdate|EdgeUpdate",
+      "reason": "Preloads Microsoft Edge and runs background updater checks on every boot.",
+      "recommendedByDefault": true,
+      "tier": "Safe"
+    },
+    {
+      "pattern": "AdobeUpdateService|AdobeAAMUpdater|AdobeGCInvoker|CCXProcess|AdobeIPCBroker",
+      "reason": "Adobe Creative Cloud background telemetry, updater, and license check daemons.",
+      "recommendedByDefault": true,
+      "tier": "Safe"
+    },
+    {
+      "pattern": "GoogleUpdate|GoogleCrashHandler",
+      "reason": "Google background updater and crash reporter daemon (Chrome still updates when opened).",
+      "recommendedByDefault": true,
+      "tier": "Safe"
+    },
+    {
+      "pattern": "Spotify",
+      "reason": "Auto-starts Spotify on login (~150-300 MB RAM). You can launch Spotify manually when needed.",
+      "recommendedByDefault": true,
+      "tier": "Safe"
+    },
+    {
+      "pattern": "Discord",
+      "reason": "Auto-starts Discord on login (~200-400 MB RAM).",
+      "recommendedByDefault": false,
+      "tier": "Optional"
+    },
+    {
+      "pattern": "Steam",
+      "reason": "Auto-starts Steam client on boot (~150-300 MB RAM).",
+      "recommendedByDefault": false,
+      "tier": "Optional"
+    },
+    {
+      "pattern": "EpicGamesLauncher",
+      "reason": "Auto-starts Epic Games Launcher on boot (~200-350 MB RAM).",
+      "recommendedByDefault": true,
+      "tier": "Safe"
+    },
+    {
+      "pattern": "Teams|msteams",
+      "reason": "Auto-starts Microsoft Teams on boot (~250-500 MB RAM).",
+      "recommendedByDefault": false,
+      "tier": "Optional"
+    },
+    {
+      "pattern": "Cortana",
+      "reason": "Legacy Cortana assistant startup entry.",
+      "recommendedByDefault": true,
+      "tier": "Safe"
+    },
+    {
+      "pattern": "Skype",
+      "reason": "Auto-starts Skype in the background.",
+      "recommendedByDefault": true,
+      "tier": "Safe"
+    },
+    {
+      "pattern": "BraveSoftwareUpdate|Opera.*Update|Mozilla.*BackgroundUpdate",
+      "reason": "Browser background update scheduled tasks (browsers update automatically when opened).",
+      "recommendedByDefault": true,
+      "tier": "Safe"
+    },
+    {
+      "pattern": "CCleaner|Avast.*Update|McAfee",
+      "reason": "Third-party cleaner/updater telemetry tasks that run on boot.",
+      "recommendedByDefault": true,
+      "tier": "Safe"
+    }
+  ]
+}
