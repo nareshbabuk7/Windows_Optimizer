@@ -400,79 +400,225 @@
   "startupPatterns": [
     {
       "pattern": "OneDrive",
-      "reason": "Cloud storage sync client that runs continuously in the background (~60-150 MB RAM).",
+      "publisher": "Microsoft Corporation",
+      "reason": "Stops OneDrive from syncing cloud files automatically on boot (~60-150 MB RAM). Files won't sync until you open OneDrive.",
       "recommendedByDefault": false,
       "tier": "Optional"
     },
     {
       "pattern": "MicrosoftEdgeAutoLaunch|MicrosoftEdgeUpdate|EdgeUpdate",
-      "reason": "Preloads Microsoft Edge and runs background updater checks on every boot.",
+      "publisher": "Microsoft Corporation",
+      "reason": "Stops Microsoft Edge from pre-loading in the background on boot. Edge will still work and update normally when opened.",
       "recommendedByDefault": true,
       "tier": "Safe"
     },
     {
-      "pattern": "AdobeUpdateService|AdobeAAMUpdater|AdobeGCInvoker|CCXProcess|AdobeIPCBroker",
-      "reason": "Adobe Creative Cloud background telemetry, updater, and license check daemons.",
+      "pattern": "AdobeUpdateService|AdobeAAMUpdater|AdobeGCInvoker|CCXProcess|AdobeIPCBroker|Adobe",
+      "publisher": "Adobe Inc.",
+      "reason": "Stops Adobe Creative Cloud background updaters and telemetry daemons. Adobe apps still launch normally when clicked.",
       "recommendedByDefault": true,
       "tier": "Safe"
     },
     {
-      "pattern": "GoogleUpdate|GoogleCrashHandler",
-      "reason": "Google background updater and crash reporter daemon (Chrome still updates when opened).",
+      "pattern": "GoogleUpdate|GoogleCrashHandler|GoogleUpdater",
+      "publisher": "Google LLC",
+      "reason": "Stops Google's background updater/crash daemon from running at login (Chrome still updates automatically when opened).",
       "recommendedByDefault": true,
       "tier": "Safe"
     },
     {
       "pattern": "Spotify",
-      "reason": "Auto-starts Spotify on login (~150-300 MB RAM). You can launch Spotify manually when needed.",
+      "publisher": "Spotify AB",
+      "reason": "Stops Spotify from auto-opening on login (~150-300 MB RAM). You can launch Spotify manually whenever you want music.",
       "recommendedByDefault": true,
       "tier": "Safe"
     },
     {
       "pattern": "Discord",
-      "reason": "Auto-starts Discord on login (~200-400 MB RAM).",
+      "publisher": "Discord Inc.",
+      "reason": "Stops Discord from auto-launching on boot (~200-400 MB RAM). You won't receive desktop notifications until you open Discord.",
       "recommendedByDefault": false,
       "tier": "Optional"
     },
     {
       "pattern": "Steam",
-      "reason": "Auto-starts Steam client on boot (~150-300 MB RAM).",
+      "publisher": "Valve Corp.",
+      "reason": "Stops Steam client from auto-starting on boot (~150-300 MB RAM). Games won't auto-update until you open Steam.",
       "recommendedByDefault": false,
       "tier": "Optional"
     },
     {
       "pattern": "EpicGamesLauncher",
-      "reason": "Auto-starts Epic Games Launcher on boot (~200-350 MB RAM).",
+      "publisher": "Epic Games, Inc.",
+      "reason": "Stops Epic Games Launcher from auto-starting on boot (~200-350 MB RAM). Launch manually when playing Epic games.",
       "recommendedByDefault": true,
       "tier": "Safe"
     },
     {
       "pattern": "Teams|msteams",
-      "reason": "Auto-starts Microsoft Teams on boot (~250-500 MB RAM).",
+      "publisher": "Microsoft Corporation",
+      "reason": "Stops Microsoft Teams from auto-starting on login (~250-500 MB RAM). You won't get chat/call alerts until you open Teams.",
       "recommendedByDefault": false,
       "tier": "Optional"
     },
     {
       "pattern": "Cortana",
-      "reason": "Legacy Cortana assistant startup entry.",
+      "publisher": "Microsoft Corporation",
+      "reason": "Disables legacy Cortana voice assistant startup entry. Zero impact on Windows 10/11.",
       "recommendedByDefault": true,
       "tier": "Safe"
     },
     {
       "pattern": "Skype",
-      "reason": "Auto-starts Skype in the background.",
+      "publisher": "Microsoft Corporation",
+      "reason": "Stops Skype from running in the system tray on boot. Launch manually when needed.",
       "recommendedByDefault": true,
       "tier": "Safe"
     },
     {
-      "pattern": "BraveSoftwareUpdate|Opera.*Update|Mozilla.*BackgroundUpdate",
-      "reason": "Browser background update scheduled tasks (browsers update automatically when opened).",
+      "pattern": "BraveSoftwareUpdate|Brave",
+      "publisher": "Brave Software, Inc.",
+      "reason": "Stops Brave Browser's background updater scheduled task. Brave updates automatically when you open the browser.",
       "recommendedByDefault": true,
       "tier": "Safe"
     },
     {
-      "pattern": "CCleaner|Avast.*Update|McAfee",
-      "reason": "Third-party cleaner/updater telemetry tasks that run on boot.",
+      "pattern": "Opera.*Update|Opera",
+      "publisher": "Opera Software",
+      "reason": "Stops Opera Browser's background updater task. Opera still updates when opened.",
+      "recommendedByDefault": true,
+      "tier": "Safe"
+    },
+    {
+      "pattern": "Mozilla.*BackgroundUpdate|Firefox",
+      "publisher": "Mozilla Corporation",
+      "reason": "Stops Firefox background silent updater task. Firefox updates normally when launched.",
+      "recommendedByDefault": true,
+      "tier": "Safe"
+    },
+    {
+      "pattern": "RtkAudUService|Realtek|RAVBg64|RtkNGUI",
+      "publisher": "Realtek Semiconductor",
+      "reason": "Realtek Audio Universal Service / Tray panel. Disabling may stop headphone jack pop-up detection or audio effects panel.",
+      "recommendedByDefault": false,
+      "tier": "Optional"
+    },
+    {
+      "pattern": "igfxTray|igfxHK|igfxEM|Intel.*Graphics|Intel.*Telemetry|Intel.*SUR",
+      "publisher": "Intel Corporation",
+      "reason": "Intel Graphics tray/hotkey helper or telemetry task. Display driver still works; display hotkeys (Ctrl+Alt+Arrow) won't trigger.",
+      "recommendedByDefault": false,
+      "tier": "Optional"
+    },
+    {
+      "pattern": "NvBackend|NVDisplay|Nvidia.*Update|NvTmMon|NvProfileUpdater",
+      "publisher": "NVIDIA Corporation",
+      "reason": "NVIDIA GeForce Experience / Telemetry background updater task. GPU drivers still work; automatic game profile updates pause.",
+      "recommendedByDefault": true,
+      "tier": "Safe"
+    },
+    {
+      "pattern": "RadeonSoftware|AMDRSSrcExt|AMD.*Update",
+      "publisher": "Advanced Micro Devices (AMD)",
+      "reason": "AMD Radeon Software tray and background updater. GPU driver works normally without the startup tray UI.",
+      "recommendedByDefault": false,
+      "tier": "Optional"
+    },
+    {
+      "pattern": "Zoom",
+      "publisher": "Zoom Video Communications",
+      "reason": "Stops Zoom from running in the background on boot. Zoom will still open normally whenever you click a meeting link.",
+      "recommendedByDefault": true,
+      "tier": "Safe"
+    },
+    {
+      "pattern": "Slack",
+      "publisher": "Slack Technologies",
+      "reason": "Stops Slack from auto-starting on boot (~250-450 MB RAM). You won't receive Slack desktop notifications until opened.",
+      "recommendedByDefault": false,
+      "tier": "Optional"
+    },
+    {
+      "pattern": "Docker",
+      "publisher": "Docker Inc.",
+      "reason": "Stops Docker Desktop from starting a Linux VM on every boot (~1-2 GB RAM!). Launch Docker manually when coding.",
+      "recommendedByDefault": true,
+      "tier": "Safe"
+    },
+    {
+      "pattern": "Dropbox",
+      "publisher": "Dropbox, Inc.",
+      "reason": "Stops Dropbox background file sync and updater on boot. Files sync only when Dropbox is launched.",
+      "recommendedByDefault": false,
+      "tier": "Optional"
+    },
+    {
+      "pattern": "iTunesHelper|AppleMobileDevice|ApplePush|iCloud",
+      "publisher": "Apple Inc.",
+      "reason": "Apple background helper for automatic iPhone/iPad USB detection or iCloud sync.",
+      "recommendedByDefault": false,
+      "tier": "Optional"
+    },
+    {
+      "pattern": "ArmouryCrate|ASUS|AsusUpdate|MyASUS",
+      "publisher": "ASUSTeK Computer Inc.",
+      "reason": "ASUS OEM background updater/RGB/telemetry task. Disabling stops background ASUS update checks (fan/RGB presets stay applied).",
+      "recommendedByDefault": true,
+      "tier": "Safe"
+    },
+    {
+      "pattern": "HP.*Touchpoint|HP.*Support|HPSystemEvent|omen",
+      "publisher": "HP Inc.",
+      "reason": "HP OEM support/telemetry background task. Safe to disable to save background CPU and RAM.",
+      "recommendedByDefault": true,
+      "tier": "Safe"
+    },
+    {
+      "pattern": "Dell.*SupportAssist|Dell.*Update|Alienware",
+      "publisher": "Dell Inc.",
+      "reason": "Dell OEM SupportAssist / automatic updater task. Safe to disable; you can check for Dell driver updates manually.",
+      "recommendedByDefault": true,
+      "tier": "Safe"
+    },
+    {
+      "pattern": "LenovoVantage|Lenovo.*Update|ImController",
+      "publisher": "Lenovo Group Ltd.",
+      "reason": "Lenovo Vantage OEM background updater/telemetry task. Safe to disable unless you use Lenovo battery charge thresholds.",
+      "recommendedByDefault": false,
+      "tier": "Optional"
+    },
+    {
+      "pattern": "Razer.*Synapse|Razer.*Central|RzSDK",
+      "publisher": "Razer Inc.",
+      "reason": "Razer Synapse RGB & macro background suite (~150-300 MB RAM). Custom mouse macros/RGB lighting require it running.",
+      "recommendedByDefault": false,
+      "tier": "Optional"
+    },
+    {
+      "pattern": "LogiOptions|LGHUB|Logitech",
+      "publisher": "Logitech Inc.",
+      "reason": "Logitech G HUB / Options+ custom mouse button & DPI daemon. Custom mouse button mappings won't apply while stopped.",
+      "recommendedByDefault": false,
+      "tier": "Optional"
+    },
+    {
+      "pattern": "Brother|BrStsMon|iPSMonitor|TwDsUiLaunch",
+      "publisher": "Brother Industries, Ltd.",
+      "reason": "Brother Printer status monitor and software update checker. Safe to disable unless you actively use a Brother printer/scanner.",
+      "recommendedByDefault": true,
+      "tier": "Safe"
+    },
+    {
+      "pattern": "Gaomon|Wacom|Huion",
+      "publisher": "Drawing Tablet Driver",
+      "reason": "Graphics drawing tablet pen pressure & shortcut driver. Safe to disable when your drawing tablet is unplugged.",
+      "recommendedByDefault": false,
+      "tier": "Optional"
+    },
+    {
+      "pattern": "CCleaner|Avast.*Update|McAfee|Norton",
+      "publisher": "Third-Party Security/Cleaner",
+      "reason": "Third-party cleaner or nagware background updater task that runs on boot. Safe to disable.",
       "recommendedByDefault": true,
       "tier": "Safe"
     }

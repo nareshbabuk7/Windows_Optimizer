@@ -185,22 +185,116 @@ function Get-AnalyzedServices {
 # ---------------------------------------------------------------------------
 # 4. Core Engine: Deep Startup Scanner (Registry + Folders + Scheduled Tasks)
 # ---------------------------------------------------------------------------
+function Resolve-ExecutableMetadata {
+    param([string]$CommandText)
+    $result = @{
+        Publisher       = ""
+        FileDescription = ""
+        ExePath         = ""
+    }
+    if ([string]::IsNullOrWhiteSpace($CommandText)) { return $result }
+
+    # Expand environment variables like %ProgramFiles% or %windir%
+    $expanded = [Environment]::ExpandEnvironmentVariables($CommandText)
+
+    # Match quoted path to .exe or unquoted path ending in .exe
+    $pathMatch = [regex]::Match($expanded, '"([^"]+\.exe)"|([a-zA-Z]:\\[^\s"]+\.exe)', [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+    if ($pathMatch.Success) {
+        $candidate = if ($pathMatch.Groups[1].Success) { $pathMatch.Groups[1].Value } else { $pathMatch.Groups[2].Value }
+        if (Test-Path -LiteralPath $candidate -ErrorAction SilentlyContinue) {
+            $result.ExePath = $candidate
+            try {
+                $vi = (Get-Item -LiteralPath $candidate -ErrorAction SilentlyContinue).VersionInfo
+                if ($vi) {
+                    if (-not [string]::IsNullOrWhiteSpace($vi.CompanyName)) {
+                        $result.Publisher = $vi.CompanyName.Trim()
+                    }
+                    if (-not [string]::IsNullOrWhiteSpace($vi.FileDescription)) {
+                        $result.FileDescription = $vi.FileDescription.Trim()
+                    }
+                }
+            } catch {}
+        }
+    }
+    return $result
+}
+
 function Get-StartupClassification {
-    param([string]$Name, [string]$Command, [object[]]$Patterns)
-    $combined = "$Name $Command"
+    param(
+        [string]$Name,
+        [string]$Command,
+        [string]$TaskDescription,
+        [string]$TaskAuthor,
+        [string]$TaskPath,
+        [object[]]$Patterns
+    )
+    $combined = "$Name $Command $TaskPath $TaskAuthor"
+    $exeMeta  = Resolve-ExecutableMetadata -CommandText $Command
+
+    # Determine best Publisher name
+    $publisher = if (-not [string]::IsNullOrWhiteSpace($exeMeta.Publisher)) {
+        $exeMeta.Publisher
+    } elseif (-not [string]::IsNullOrWhiteSpace($TaskAuthor) -and $TaskAuthor -notmatch '^\$\(' -and $TaskAuthor -ne $env:USERNAME) {
+        $TaskAuthor.Trim()
+    } elseif ($TaskPath -match '^\\([^\\]+)\\') {
+        $Matches[1]
+    } else {
+        ""
+    }
+
     foreach ($p in $Patterns) {
         if ($combined -match $p.pattern) {
+            $pub = if (-not [string]::IsNullOrWhiteSpace($publisher)) {
+                $publisher
+            } elseif ($p.PSObject.Properties['publisher'] -and -not [string]::IsNullOrWhiteSpace($p.publisher)) {
+                $p.publisher
+            } else {
+                "Verified Vendor"
+            }
+            $isSafe = ($p.tier -eq 'Safe')
             return [PSCustomObject]@{
+                Publisher   = $pub
                 Tier        = $p.tier
                 Reason      = $p.reason
                 Recommended = [bool]$p.recommendedByDefault
+                TierColor   = if ($isSafe) { "#34D399" } else { "#FBBF24" }
+                TierBgColor = if ($isSafe) { "#064E3B" } else { "#451A03" }
             }
         }
     }
+
+    # Build a specific, human-readable explanation when not in static pattern list
+    $cleanTaskDesc = if (-not [string]::IsNullOrWhiteSpace($TaskDescription) -and $TaskDescription -notmatch '^\$\(@') {
+        $TaskDescription.Trim()
+    } else { "" }
+
+    $specificReason = if ($Name -match 'Update|Updater|Maintenance|Patch' -or $Command -match 'update') {
+        $targetApp = if (-not [string]::IsNullOrWhiteSpace($exeMeta.FileDescription)) { $exeMeta.FileDescription } elseif ($publisher) { $publisher } else { $Name }
+        "Background auto-updater for $targetApp. Safe to disable if you prefer updating the app manually when opened."
+    } elseif ($Name -match 'Telemetry|Diag|Crash|Report|Analytics|CEIP|Customer') {
+        "Background diagnostic/crash reporting task ($(if ($publisher) { $publisher } else { $Name })). Safe to disable with zero impact on app features."
+    } elseif (-not [string]::IsNullOrWhiteSpace($cleanTaskDesc)) {
+        "$cleanTaskDesc (If disabled, this background task won't run automatically)."
+    } elseif (-not [string]::IsNullOrWhiteSpace($exeMeta.FileDescription)) {
+        "Auto-starts '$($exeMeta.FileDescription)' in the background. If disabled, you will need to launch it manually when needed."
+    } else {
+        "Runs '$Name' automatically in the background ($(if ($Command) { Split-Path ($Command -replace '\"','') -Leaf } else { 'Custom task' })). Disabling stops it from auto-starting on boot."
+    }
+
+    if ([string]::IsNullOrWhiteSpace($publisher)) {
+        $publisher = if ($Command -match 'Program Files.*\\Microsoft|Windows\\System32') { "Microsoft Corporation" } else { "Third-Party Vendor" }
+    }
+
+    $autoSafe = ($Name -match 'Update|Updater|Telemetry|Crash|Report|Helper')
+    $tierVal  = if ($autoSafe) { "Safe" } else { "Optional" }
+
     return [PSCustomObject]@{
-        Tier        = "Review"
-        Reason      = "Third-party or custom startup entry running automatically on sign-in."
-        Recommended = $false
+        Publisher   = $publisher
+        Tier        = $tierVal
+        Reason      = $specificReason
+        Recommended = [bool]$autoSafe
+        TierColor   = if ($autoSafe) { "#34D399" } else { "#FBBF24" }
+        TierBgColor = if ($autoSafe) { "#064E3B" } else { "#451A03" }
     }
 }
 
@@ -227,8 +321,9 @@ function Get-AnalyzedStartupItems {
         if (-not $props) { continue }
 
         foreach ($prop in $props.PSObject.Properties) {
-            if ($prop.Name -in @('PSPath','PSParentPath','PSChildName','PSDrive','PSProvider')) { continue }
+            if ($prop.Name -in @('PSPath','PSParentPath','PSChildName','PSDrive','PSProvider','(default)')) { continue }
             $val = [string]$prop.Value
+            if ([string]::IsNullOrWhiteSpace($val)) { continue }
             # Skip Windows Security Health tray icon by default
             if ($prop.Name -match '^SecurityHealth$') { continue }
 
@@ -238,6 +333,7 @@ function Get-AnalyzedStartupItems {
             $items.Add([PSCustomObject]@{
                 IsSelected  = [bool]$meta.Recommended
                 Name        = $prop.Name
+                Publisher   = $meta.Publisher
                 SourceType  = "Registry ($($loc.Scope))"
                 Location    = $loc.Path
                 Command     = $val
@@ -245,6 +341,8 @@ function Get-AnalyzedStartupItems {
                 RamMB       = [double]$ram
                 RamDisplay  = "{0:N1} MB" -f $ram
                 Tier        = $meta.Tier
+                TierColor   = $meta.TierColor
+                TierBgColor = $meta.TierBgColor
                 Reason      = $meta.Reason
                 Recommended = [bool]$meta.Recommended
             })
@@ -266,6 +364,7 @@ function Get-AnalyzedStartupItems {
             $items.Add([PSCustomObject]@{
                 IsSelected  = [bool]$meta.Recommended
                 Name        = $f.BaseName
+                Publisher   = $meta.Publisher
                 SourceType  = $floc.Scope
                 Location    = $f.FullName
                 Command     = $f.FullName
@@ -273,6 +372,8 @@ function Get-AnalyzedStartupItems {
                 RamMB       = [double]$ram
                 RamDisplay  = "{0:N1} MB" -f $ram
                 Tier        = $meta.Tier
+                TierColor   = $meta.TierColor
+                TierBgColor = $meta.TierBgColor
                 Reason      = $meta.Reason
                 Recommended = [bool]$meta.Recommended
             })
@@ -288,12 +389,15 @@ function Get-AnalyzedStartupItems {
             $actionExec = ($t.Actions | ForEach-Object { "$($_.Execute) $($_.Arguments)".Trim() }) -join '; '
             if ([string]::IsNullOrWhiteSpace($actionExec)) { continue }
 
-            $meta = Get-StartupClassification -Name $t.TaskName -Command $actionExec -Patterns $patterns
+            $tAuthor = if ($t.Author) { [string]$t.Author } else { "" }
+            $tDesc   = if ($t.Description) { [string]$t.Description } else { "" }
+            $meta = Get-StartupClassification -Name $t.TaskName -Command $actionExec -TaskDescription $tDesc -TaskAuthor $tAuthor -TaskPath $t.TaskPath -Patterns $patterns
             $ram = Get-ExecutableRamMB -CommandText $actionExec
 
             $items.Add([PSCustomObject]@{
                 IsSelected  = [bool]$meta.Recommended
                 Name        = $t.TaskName
+                Publisher   = $meta.Publisher
                 SourceType  = "Scheduled Task (Hidden in TaskMgr)"
                 Location    = "$($t.TaskPath)$($t.TaskName)"
                 TaskPath    = $t.TaskPath
@@ -303,6 +407,8 @@ function Get-AnalyzedStartupItems {
                 RamMB       = [double]$ram
                 RamDisplay  = "{0:N1} MB" -f $ram
                 Tier        = $meta.Tier
+                TierColor   = $meta.TierColor
+                TierBgColor = $meta.TierBgColor
                 Reason      = $meta.Reason
                 Recommended = [bool]$meta.Recommended
             })
@@ -318,12 +424,13 @@ function Get-AnalyzedStartupItems {
                 $relPath = $tf.FullName.Substring($tasksRoot.Length)
                 $taskFolder = Split-Path $relPath -Parent
                 if (-not $taskFolder.EndsWith("\")) { $taskFolder += "\" }
-                $meta = Get-StartupClassification -Name $tf.Name -Command $relPath -Patterns $patterns
+                $meta = Get-StartupClassification -Name $tf.Name -Command $relPath -TaskPath $taskFolder -Patterns $patterns
                 $ram = Get-ExecutableRamMB -CommandText $tf.Name
 
                 $items.Add([PSCustomObject]@{
                     IsSelected  = [bool]$meta.Recommended
                     Name        = $tf.Name
+                    Publisher   = $meta.Publisher
                     SourceType  = "Scheduled Task (Hidden in TaskMgr)"
                     Location    = $relPath
                     TaskPath    = $taskFolder
@@ -333,6 +440,8 @@ function Get-AnalyzedStartupItems {
                     RamMB       = [double]$ram
                     RamDisplay  = "{0:N1} MB" -f $ram
                     Tier        = $meta.Tier
+                    TierColor   = $meta.TierColor
+                    TierBgColor = $meta.TierBgColor
                     Reason      = $meta.Reason
                     Recommended = [bool]$meta.Recommended
                 })
@@ -359,7 +468,8 @@ if ($HeadlessScanOnly) {
         ServiceRamMB         = [math]::Round($totalSvcRam, 2)
         StartupItemsCount    = $startups.Count
         StartupRamMB         = [math]::Round($totalStartupRam, 2)
-    } | ConvertTo-Json
+        SampleStartups       = @($startups | Select-Object -First 10 Name, Publisher, Tier, Reason)
+    } | ConvertTo-Json -Depth 4
     exit 0
 }
 
@@ -719,11 +829,23 @@ Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase, Sys
                     <DataGrid Name="GridStartup" Grid.Row="0" RowHeight="36">
                         <DataGrid.Columns>
                             <DataGridCheckBoxColumn Header="Remove" Binding="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="68"/>
-                            <DataGridTextColumn Header="Startup App / Task" Binding="{Binding Name}" Width="240" IsReadOnly="True" FontWeight="SemiBold"/>
-                            <DataGridTextColumn Header="Active RAM" Binding="{Binding RamDisplay}" Width="105" IsReadOnly="True" FontWeight="Bold"/>
-                            <DataGridTextColumn Header="Safety" Binding="{Binding Tier}" Width="85" IsReadOnly="True"/>
-                            <DataGridTextColumn Header="Where It Hides" Binding="{Binding SourceType}" Width="230" IsReadOnly="True"/>
-                            <DataGridTextColumn Header="Why Disable / What Breaks?" Binding="{Binding Reason}" Width="*" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Startup App / Task" Binding="{Binding Name}" Width="210" IsReadOnly="True" FontWeight="SemiBold"/>
+                            <DataGridTextColumn Header="Publisher" Binding="{Binding Publisher}" Width="175" IsReadOnly="True" Foreground="#38BDF8"/>
+                            <DataGridTextColumn Header="Active RAM" Binding="{Binding RamDisplay}" Width="95" IsReadOnly="True" FontWeight="Bold"/>
+
+                            <!-- Color-Coded Safety Badge -->
+                            <DataGridTemplateColumn Header="Safety" Width="90" IsReadOnly="True">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border Background="{Binding TierBgColor}" CornerRadius="4" Padding="8,2" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="8,0">
+                                            <TextBlock Text="{Binding Tier}" Foreground="{Binding TierColor}" FontWeight="Bold" FontSize="11.5"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <DataGridTextColumn Header="Where It Hides" Binding="{Binding SourceType}" Width="195" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="What Breaks If Disabled?" Binding="{Binding Reason}" Width="*" IsReadOnly="True"/>
                         </DataGrid.Columns>
                     </DataGrid>
 
@@ -864,7 +986,7 @@ $GridServices.Add_SelectionChanged({
 $GridStartup.Add_SelectionChanged({
     $sel = $GridStartup.SelectedItem
     if ($null -ne $sel) {
-        $TxtStartupInspector.Text = "$($sel.Name) ($($sel.SourceType)) — Command/Path: $($sel.Command)"
+        $TxtStartupInspector.Text = "$($sel.Name)  •  [Publisher: $($sel.Publisher) | Source: $($sel.SourceType)]`r`nWhat Breaks / Impact: $($sel.Reason)`r`nCommand: $($sel.Command)"
     }
 })
 
